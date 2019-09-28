@@ -1,0 +1,5 @@
+package solver
+
+object Combinator {
+
+}

@@ -1,18 +1,34 @@
 package parser
 
-sealed abstract class FunEqTreeExpr {
+sealed abstract class FunEqExpr {
   def print(level: Int): String
+
+  override def toString: String = print(0)
 }
 
-case class FunEqTreeIntLeaf(value: Int) extends FunEqTreeExpr {
-  def print(level: Int): String = value.toString
+case class FunEqIntLeaf(value: Int) extends FunEqExpr {
+  def print(level: Int): String = if (value >= 0 | level == 0) value.toString else "(" + value.toString + ")"
+
+  def ==(other: FunEqExpr): Boolean = {
+    other match {
+      case FunEqIntLeaf(v) => this.value == v
+      case _ => false
+    }
+  }
 }
 
-case class FunEqTreeVarLeaf(value: String) extends FunEqTreeExpr {
-  def print(level: Int): String = value
+case class FunEqVarLeaf(name: String) extends FunEqExpr {
+  def print(level: Int): String = name
+
+  def ==(other: FunEqExpr): Boolean = {
+    other match {
+      case FunEqVarLeaf(n) => this.name == n
+      case _ => false
+    }
+  }
 }
 
-case class FunEqTreeNode(op: String, left: FunEqTreeExpr, right: FunEqTreeExpr) extends FunEqTreeExpr {
+case class FunEqNode(op: String, left: FunEqExpr, right: FunEqExpr) extends FunEqExpr {
   def print(level: Int): String = {
     val inner = left.print(level + 1) + " " + op + " " + right.print(level + 1)
     if (level == 0)
@@ -20,12 +36,33 @@ case class FunEqTreeNode(op: String, left: FunEqTreeExpr, right: FunEqTreeExpr) 
     else
       "(" + inner + ")"
   }
+
+  def ==(other: FunEqExpr): Boolean = {
+    other match {
+      case FunEqNode(o, a, b)
+        => (this.op == o) & ((a == this.left & b == this.right) | (a == this.right & b == this.left))
+      case _ => false
+    }
+  }
 }
 
-case class FunEqTreeFunc(op: String, operand: FunEqTreeExpr) extends FunEqTreeExpr {
-  def print(level: Int): String = op + "(" + operand.print(level) + ")"
+case class FunEqFunc(name: String, argument: FunEqExpr) extends FunEqExpr {
+  def print(level: Int): String = name + "(" + argument.print(0) + ")"
+
+  def ==(other: FunEqExpr): Boolean = {
+    other match {
+      case FunEqFunc(_, a) => this.argument == a
+      case _ => false
+    }
+  }
 }
 
-case class FunEqTreeEquation(left: FunEqTreeExpr, right: FunEqTreeExpr) {
+case class FunEqEquation(guid: String, parents: List[String], left: FunEqExpr, right: FunEqExpr) {
+
+  def isTautology: Boolean = left == right
+
   override def toString: String = left.print(0) + " = " + right.print(0)
+
+  def ==(other: FunEqEquation): Boolean =
+    (left == other.left & right == other.right) | (left == other.right & right == other.left)
 }
