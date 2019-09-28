@@ -14,12 +14,10 @@ class FunEqParser extends JavaTokenParsers with RegexParsers {
 
   def term: Parser[FunEqTreeExpr] = (
     factor~"*"~factor ^^ { case left ~ "*" ~ right => FunEqTreeNode("*", left, right) }
-      | factor ~ "*" ~ "(" ~ expr ~ ")" ^^ { case left ~ "*" ~ "(" ~ right ~ ")" => FunEqTreeNode("*", left, right) }
-      | "(" ~ expr ~ ")" ~ "*" ~  factor ^^ { case "(" ~ left ~ ")" ~ "*" ~ right => FunEqTreeNode("*", left, right) }
       | factor
     )
 
-  def factor: Parser[FunEqTreeExpr] = variable | functionCall
+  def factor: Parser[FunEqTreeExpr] = variable | functionCall | "(" ~> expr <~ ")"
 
   def variable: Parser[FunEqTreeExpr] = """[xyzw]""".r ^^
     { v => FunEqTreeVarLeaf(v) }
