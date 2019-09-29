@@ -8,7 +8,7 @@ case class FunEqEquation(source: FunEqSource, left: FunEqExpression, right: FunE
 
   override def equals(obj: Any): Boolean = obj match {
     case other: FunEqEquation =>
-      (left == other.left & right == other.right) | (left == other.right & right == other.left)
+      (left == other.left && right == other.right) || (left == other.right && right == other.left)
     case _ => false
   }
 

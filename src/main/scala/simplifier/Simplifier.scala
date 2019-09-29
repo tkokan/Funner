@@ -7,7 +7,8 @@ object Simplifier {
   private val simplifiers = List(
     new AdditionSimplifier,
     new ConstantsSimplifier,
-    new SumsSimplifier
+    new SumsSimplifier,
+    new VariablesNormaliser
   )
 
   private val composedSimplifier = simplifiers

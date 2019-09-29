@@ -7,7 +7,7 @@ sealed abstract class FunEqExpression {
 }
 
 case class FunEqIntLeaf(value: Int) extends FunEqExpression {
-  def print(level: Int): String = if (value >= 0 | level == 0) value.toString else "(" + value.toString + ")"
+  def print(level: Int): String = if (value >= 0 || level == 0) value.toString else "(" + value.toString + ")"
 
   override def equals(obj: Any): Boolean = obj match {
       case other: FunEqIntLeaf => value == other.value
@@ -36,7 +36,7 @@ case class FunEqNode(op: String, left: FunEqExpression, right: FunEqExpression) 
   override def equals(obj: Any): Boolean = obj match {
       case other: FunEqNode
         => ((op == other.op)
-          & ((left == other.left & right == other.right) | (right == other.left & left == other.right)))
+          && ((left == other.left && right == other.right) || (right == other.left && left == other.right)))
       case _ => false
     }
 
@@ -55,7 +55,7 @@ case class FunEqFunc(name: String, argument: FunEqExpression) extends FunEqExpre
   def print(level: Int): String = name + "(" + argument.print(0) + ")"
 
   override def equals(obj: Any): Boolean = obj match {
-      case other: FunEqFunc => (name == other.name) & (argument == other.argument)
+      case other: FunEqFunc => (name == other.name) && (argument == other.argument)
       case _ => false
     }
 }

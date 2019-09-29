@@ -14,6 +14,7 @@ object Tester extends App {
 
     val parser = new FunEqParser()
 
+    // ToDo: Shouldn't use this get
     val equation = parser.parseEquation(input).get
 
     println("equation: " + equation)
