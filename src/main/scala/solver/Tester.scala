@@ -1,7 +1,6 @@
 package solver
 
 import parser.FunEqParser
-
 import scala.collection.immutable.HashSet
 
 object Tester extends App {

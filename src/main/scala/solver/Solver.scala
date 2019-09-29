@@ -1,12 +1,13 @@
 package solver
 
 import general.FunEqEquation
-
 import scala.collection.immutable.HashSet
-
 import simplifier.Simplifier
+import general.Info
 
 object Solver {
+
+  def expand(equation: FunEqEquation): HashSet[FunEqEquation] = expand(HashSet(Simplifier.simplify(equation)))
 
   private def expand(equations: HashSet[FunEqEquation]): HashSet[FunEqEquation] = {
     def newEquations = equations ++ equations.flatMap(x => expandSingle(x))
@@ -14,11 +15,9 @@ object Solver {
     if (newEquations.size > equations.size) expand(newEquations) else newEquations
   }
 
-  def expand(equation: FunEqEquation): HashSet[FunEqEquation] = expand(HashSet(Simplifier.simplify(equation)))
-
   private def expandSingle(equation: FunEqEquation) = {
     for (
-      variable <- Substitutor.allVariables(equation);
+      variable <- Info.getAllVariables(equation);
       value <- -1 to 2
     ) yield subAndSimplify(equation, variable, value)
   }

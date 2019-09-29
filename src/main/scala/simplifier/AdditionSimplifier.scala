@@ -3,6 +3,7 @@ package simplifier
 import general.{FunEqEquation, FunEqNode, FunEqSource}
 
 class AdditionSimplifier extends AbstractSimplifier {
+
   override val description: String = "Cancel addition."
 
   override def simplify(equation: FunEqEquation): FunEqEquation = {

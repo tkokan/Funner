@@ -3,6 +3,7 @@ package simplifier
 import general.{FunEqExpression, FunEqFunc, FunEqIntLeaf, FunEqNode}
 
 class ConstantsSimplifier extends AbstractSimplifier {
+
   override val description: String = "Simplify constants."
 
   override def simplify(expression: FunEqExpression): FunEqExpression =

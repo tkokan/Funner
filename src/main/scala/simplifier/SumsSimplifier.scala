@@ -3,6 +3,7 @@ package simplifier
 import general.{FunEqExpression, FunEqFunc, FunEqIntLeaf, FunEqNode}
 
 class SumsSimplifier extends AbstractSimplifier {
+
   override val description: String = "Sum to product."
 
   override def simplify(expression: FunEqExpression): FunEqExpression =
