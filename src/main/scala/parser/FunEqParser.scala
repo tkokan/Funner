@@ -1,14 +1,13 @@
 package parser
 
 import scala.util.parsing.combinator._
-import java.util.UUID.randomUUID
 
-import general.{FunEqEquation, FunEqExpression, FunEqFunc, FunEqNode, FunEqVarLeaf, FunEqIntLeaf}
+import general.{FunEqEquation, FunEqExpression, FunEqFunc, FunEqIntLeaf, FunEqNode, FunEqSource, FunEqVarLeaf}
 
 class FunEqParser extends JavaTokenParsers with RegexParsers {
 
   def eq: Parser[FunEqEquation] = expr~"="~expr ^^
-    { case left~"="~right => FunEqEquation(randomUUID.toString, List(), left, right) }
+    { case left~"="~right => FunEqEquation(FunEqSource(List(), "Parsed."), left, right) }
 
   def expr: Parser[FunEqExpression] = (
     term~("+"|"-")~term ^^ { case left~op~right => FunEqNode(op, left, right) }

@@ -4,6 +4,8 @@ import general.FunEqEquation
 
 import scala.collection.immutable.HashSet
 
+import simplifier.Simplifier
+
 object Solver {
 
   private def expand(equations: HashSet[FunEqEquation]): HashSet[FunEqEquation] = {
@@ -27,38 +29,6 @@ object Solver {
       println(":: " + equation + " --> " + newEquation + " [" + variable + "=" + value + "]")
     newEquation
   }
-
-  def printTrace(allEquations: HashSet[FunEqEquation], derivedEquation: String): Unit = {
-    val firstEq = findByText(derivedEquation, allEquations)
-    val trace = getTrace(firstEq, allEquations, List())
-
-    println("Trace length: " + trace.length)
-
-    for (
-      equation <- trace.reverse
-    ) println(equation)
-  }
-
-  def getTrace(
-      currEquation: Option[FunEqEquation],
-      allEquations: HashSet[FunEqEquation],
-      trace: List[FunEqEquation]): List[FunEqEquation]= {
-
-    currEquation match {
-      case Some(equation) if equation.parents.nonEmpty =>
-        getTrace(findByGuid(equation.parents.head, allEquations), allEquations, trace :+ equation)
-
-      case Some(equation) if equation.parents.isEmpty => trace :+ equation
-
-      case None => trace
-    }
-  }
-
-  def findByGuid(guid: String, allEquations: HashSet[FunEqEquation]): Option[FunEqEquation] =
-    allEquations.find(_.guid == guid)
-
-  def findByText(equation: String, allEquations: HashSet[FunEqEquation]): Option[FunEqEquation] =
-    allEquations.find(_.toString == equation)
 }
 
 

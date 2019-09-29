@@ -1,6 +1,6 @@
 package general
 
-case class FunEqEquation(guid: String, parents: List[String], left: FunEqExpression, right: FunEqExpression) {
+case class FunEqEquation(source: FunEqSource, left: FunEqExpression, right: FunEqExpression) {
 
   def isTautology: Boolean = left == right
 
