@@ -8,7 +8,8 @@ object Simplifier {
     new AdditionSimplifier,
     new ConstantsSimplifier,
     new SumsSimplifier,
-    new VariablesNormaliser
+    new VariablesNormaliser,
+    new MultiplicationSimplifier
   )
 
   private val composedSimplifier = simplifiers

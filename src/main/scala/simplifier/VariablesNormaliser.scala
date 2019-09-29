@@ -20,7 +20,7 @@ class VariablesNormaliser extends AbstractSimplifier {
     }
   }
 
-  def allPairs = {
+  private def allPairs: List[(String, String)] = {
     for {
       (x, idxX) <- variables.zipWithIndex
       (y, idxY) <- variables.zipWithIndex
@@ -28,7 +28,7 @@ class VariablesNormaliser extends AbstractSimplifier {
     } yield (x, y)
   }
 
-  def sub(equation: FunEqEquation, oldName: String, newName: String): FunEqEquation = {
+  private def sub(equation: FunEqEquation, oldName: String, newName: String): FunEqEquation = {
     equation match {
       case FunEqEquation(_, left, right)
       => FunEqEquation(
