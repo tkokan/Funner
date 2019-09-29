@@ -1,6 +1,6 @@
 package solver
 
-import parser.{FunEqEquation, FunEqExpr, FunEqNode, FunEqFunc, FunEqIntLeaf, FunEqVarLeaf}
+import general.{FunEqEquation, FunEqExpression, FunEqNode, FunEqFunc, FunEqIntLeaf, FunEqVarLeaf}
 import java.util.UUID.randomUUID
 
 object Substitutor {
@@ -12,7 +12,7 @@ object Substitutor {
     }
   }
 
-  def sub(expr: FunEqExpr, variable: String, value: Int): FunEqExpr = {
+  def sub(expr: FunEqExpression, variable: String, value: Int): FunEqExpression = {
     expr match {
       case FunEqVarLeaf(`variable`) => FunEqIntLeaf(value)
       case FunEqVarLeaf(name) => FunEqVarLeaf(name)
@@ -28,7 +28,7 @@ object Substitutor {
     }
   }
 
-  def allVariables(expr: FunEqExpr): Set[String] = {
+  def allVariables(expr: FunEqExpression): Set[String] = {
     expr match {
       case FunEqVarLeaf(v) => Set(v)
       case FunEqNode(_, left, right) => allVariables(left) ++ allVariables(right)

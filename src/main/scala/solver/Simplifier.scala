@@ -1,11 +1,13 @@
 package solver
 
-import parser.{FunEqEquation, FunEqExpr, FunEqNode, FunEqFunc, FunEqIntLeaf}
+import general.{FunEqEquation, FunEqExpression, FunEqNode, FunEqFunc, FunEqIntLeaf}
 import java.util.UUID.randomUUID
 
 object Simplifier {
 
-  def simplify(equation: FunEqEquation): FunEqEquation = simplifyAddition(simplifyConstants(equation))
+
+
+  def simplify(equation: FunEqEquation): FunEqEquation = simplifySums(simplifyAddition(simplifyConstants(equation)))
 
   private def simplifyAddition(equation: FunEqEquation): FunEqEquation = {
     equation match {
@@ -32,39 +34,59 @@ object Simplifier {
     }
   }
 
-  private def simplifyConstants(expr: FunEqExpr): FunEqExpr = {
+  private def simplifyConstants(expr: FunEqExpression): FunEqExpression = expr match {
 
-    expr match {
+    case FunEqFunc(name, argument) => FunEqFunc(name, simplifyConstants(argument))
 
-      case FunEqFunc(name, argument) => FunEqFunc(name, simplifyConstants(argument))
+    case FunEqNode(op, left, right) => {
+      val simple_left = simplifyConstants(left)
+      val simple_right = simplifyConstants(right)
 
-      case FunEqNode(op, left, right) => {
-        val simple_left = simplifyConstants(left)
-        val simple_right = simplifyConstants(right)
+      (op, simple_left, simple_right) match {
+        case ("+", FunEqIntLeaf(a), FunEqIntLeaf(b)) => FunEqIntLeaf(a + b)
+        case ("*", FunEqIntLeaf(a), FunEqIntLeaf(b)) => FunEqIntLeaf(a * b)
+        case ("+", FunEqIntLeaf(0), x) => x
 
-        (op, simple_left, simple_right) match {
-          case ("+", FunEqIntLeaf(a), FunEqIntLeaf(b)) => FunEqIntLeaf(a + b)
-          case ("*", FunEqIntLeaf(a), FunEqIntLeaf(b)) => FunEqIntLeaf(a * b)
-          case ("+", FunEqIntLeaf(0), x) => x
+        // this won't be necessary for normalised equations ("smaller" side on the left side)
+        case ("+", x, FunEqIntLeaf(0)) => x
 
-          // this won't be necessary for normalised equations ("smaller" side on the left side)
-          case ("+", x, FunEqIntLeaf(0)) => x
+        case ("*", FunEqIntLeaf(1), x) => x
 
-          case ("*", FunEqIntLeaf(1), x) => x
+        // also won't be necessary
+        case ("*", x, FunEqIntLeaf(1)) => x
 
-          // also won't be necessary
-          case ("*", x, FunEqIntLeaf(1)) => x
+        case ("*", FunEqIntLeaf(0), _) => FunEqIntLeaf(0)
 
-          case ("*", FunEqIntLeaf(0), _) => FunEqIntLeaf(0)
+        // also won't be necessary
+        case ("*", _, FunEqIntLeaf(0)) => FunEqIntLeaf(0)
 
-          // also won't be necessary
-          case ("*", _, FunEqIntLeaf(0)) => FunEqIntLeaf(0)
+        case _ => FunEqNode(op, simple_left, simple_right)
+      }
+    }
 
-          case _ => FunEqNode(op, simple_left, simple_right)
-        }
+    case y => y
+  }
+
+  private def simplifySums(expr: FunEqExpression): FunEqExpression = expr match {
+
+    case FunEqFunc(name, argument) => FunEqFunc(name, simplifyConstants(argument))
+
+    case FunEqNode(op, left, right) =>
+      val simple_left = simplifySums(left)
+      val simple_right = simplifySums(right)
+
+      (op, simple_left, simple_right) match {
+        case ("+", a, b) if a == b => FunEqNode("*", FunEqIntLeaf(2), a)
+        case _ => FunEqNode(op, simple_left, simple_right)
       }
 
-      case y => y
+    case y => y
+  }
+
+  private def simplifySums(equation: FunEqEquation): FunEqEquation = {
+    equation match {
+      case FunEqEquation(g, _, left, right)
+      => FunEqEquation(randomUUID.toString, List(g), simplifySums(left), simplifySums(right))
     }
   }
 }
