@@ -1,4 +1,5 @@
 package processor
+
 import general.{FunEqEquation, FunEqExpression, FunEqSource}
 
 abstract class PiecewiseProcessor extends SingleResultProcessor {

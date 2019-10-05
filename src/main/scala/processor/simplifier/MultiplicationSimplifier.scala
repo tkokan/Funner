@@ -1,6 +1,6 @@
 package processor.simplifier
 
-import general.{FunEqEquation, FunEqIntLeaf, FunEqNode, FunEqSource}
+import general._
 import processor.IndependentProcessor
 
 import scala.collection.immutable.HashSet

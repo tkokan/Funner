@@ -38,7 +38,7 @@ object Substitutor extends IndependentProcessor {
   private def subAndSimplify(equation: FunEqEquation, variable: String, value: Int): FunEqEquation = {
     val newEquation = sub(equation, variable, value)
     if (newEquation.toString == "2 * f(y) = f(0) + f(2 * y)")
-      println(":: " + equation + " --> " + newEquation + " [" + variable + "=" + value + "]")
+      println(s":: $equation --> $newEquation [$variable=$value]")
     newEquation
   }
 }

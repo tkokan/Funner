@@ -8,14 +8,12 @@ object Solver {
 
   def solve(equation: FunEqEquation): Unit = {
 
-    val solutionCase = new SolutionCase(cases = List(), inputEquations = HashSet(equation),  assumptions = List())
+    val solutionCase = new SolutionCase(cases = List(), inputEquations = HashSet(equation), assumptions = List())
 
     solutionCase.solve()
 
     solutionCase.print()
   }
-
-
 }
 
 

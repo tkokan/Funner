@@ -4,7 +4,7 @@ case class FunEqEquation(source: FunEqSource, left: FunEqExpression, right: FunE
 
   def isTrivial: Boolean = left == right
 
-  override def toString: String = left.print(0) + " = " + right.print(0)
+  override def toString: String = s"${left.print(0)} = ${right.print(0)}"
 
   override def equals(obj: Any): Boolean = obj match {
     case other: FunEqEquation =>

@@ -10,14 +10,14 @@ object Tester extends App {
   def test1(): Unit = {
     val input = "f(x) * f(y) = f(x + y) + x*y"
 
-    println("input: " + input)
+    println(s"Input: $input")
 
     val parser = new FunEqParser()
 
     // ToDo: Shouldn't use this get
     val equation = parser.parseEquation(input).get
 
-    println("equation: " + equation)
+    println(s"Equation: $equation")
     println()
 
     Solver.solve(equation)

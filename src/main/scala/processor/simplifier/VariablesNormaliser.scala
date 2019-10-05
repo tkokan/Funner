@@ -2,7 +2,6 @@ package processor.simplifier
 
 import general._
 import processor.SingleResultProcessor
-
 import scala.annotation.tailrec
 
 object VariablesNormaliser extends SingleResultProcessor {
@@ -46,5 +45,5 @@ object VariablesNormaliser extends SingleResultProcessor {
       case FunEqNode(op, left, right) => FunEqNode(op, sub(left, oldName, newName), sub(right, oldName, newName))
       case FunEqFunc(name, argument) => FunEqFunc(name, sub(argument, oldName, newName))
       case other => other
-  }
+    }
 }

@@ -1,8 +1,7 @@
 package parser
 
 import scala.util.parsing.combinator._
-
-import general.{FunEqEquation, FunEqExpression, FunEqFunc, FunEqIntLeaf, FunEqNode, FunEqSource, FunEqVarLeaf}
+import general._
 
 class FunEqParser extends JavaTokenParsers with RegexParsers {
 
@@ -29,5 +28,4 @@ class FunEqParser extends JavaTokenParsers with RegexParsers {
     { case "f" ~ "(" ~ arg ~ ")" => FunEqFunc("f", arg) }
 
   def parseEquation(input: String): ParseResult[FunEqEquation] = parseAll(eq, input)
-
 }

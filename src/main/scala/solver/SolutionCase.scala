@@ -23,14 +23,13 @@ class SolutionCase(cases: List[String], inputEquations: HashSet[FunEqEquation], 
   }
 
   def print(): Unit = {
-    println(name)
+    println(s"Case: $name")
 
     println()
     equations match {
       case None => println("Not processed yet.")
       case Some(e) =>
-        println("Total equations: " + e.size)
-        println()
+        println(s"Total equations: ${e.size}\n")
         for (equation <- e.toList.sortWith(_.toString.length < _.toString.length)) println(equation)
     }
   }

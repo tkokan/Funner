@@ -7,7 +7,7 @@ sealed abstract class FunEqExpression {
 }
 
 case class FunEqIntLeaf(value: Int) extends FunEqExpression {
-  def print(level: Int): String = if (value >= 0 || level == 0) value.toString else "(" + value.toString + ")"
+  def print(level: Int): String = if (value >= 0 || level == 0) value.toString else s"($value)"
 
   override def equals(obj: Any): Boolean = obj match {
       case other: FunEqIntLeaf => value == other.value
@@ -26,11 +26,11 @@ case class FunEqVarLeaf(name: String) extends FunEqExpression {
 
 case class FunEqNode(op: String, left: FunEqExpression, right: FunEqExpression) extends FunEqExpression {
   def print(level: Int): String = {
-    val inner = left.print(level + 1) + " " + op + " " + right.print(level + 1)
+    val inner = s"${left.print(level + 1)} $op ${right.print(level + 1)}"
     if (level == 0)
       inner
     else
-      "(" + inner + ")"
+      s"($inner)"
   }
 
   override def equals(obj: Any): Boolean = obj match {
@@ -52,7 +52,7 @@ case class FunEqNode(op: String, left: FunEqExpression, right: FunEqExpression) 
 }
 
 case class FunEqFunc(name: String, argument: FunEqExpression) extends FunEqExpression {
-  def print(level: Int): String = name + "(" + argument.print(0) + ")"
+  def print(level: Int): String = s"$name(${argument.print(0)})"
 
   override def equals(obj: Any): Boolean = obj match {
       case other: FunEqFunc => (name == other.name) && (argument == other.argument)

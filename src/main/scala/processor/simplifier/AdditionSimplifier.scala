@@ -1,6 +1,6 @@
 package processor.simplifier
 
-import general.{FunEqEquation, FunEqNode, FunEqSource}
+import general._
 import processor.SingleResultProcessor
 
 object AdditionSimplifier extends  SingleResultProcessor {

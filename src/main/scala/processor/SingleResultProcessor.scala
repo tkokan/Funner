@@ -1,4 +1,5 @@
 package processor
+
 import general.FunEqEquation
 
 import scala.collection.immutable.HashSet

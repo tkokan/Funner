@@ -1,7 +1,6 @@
 package processor
 
 import general.FunEqEquation
-
 import scala.annotation.tailrec
 import scala.collection.immutable.HashSet
 

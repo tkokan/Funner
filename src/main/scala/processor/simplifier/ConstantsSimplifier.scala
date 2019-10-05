@@ -1,6 +1,6 @@
 package processor.simplifier
 
-import general.{FunEqExpression, FunEqFunc, FunEqIntLeaf, FunEqNode}
+import general._
 import processor.PiecewiseProcessor
 
 object ConstantsSimplifier extends PiecewiseProcessor {
