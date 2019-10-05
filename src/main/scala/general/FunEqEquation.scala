@@ -2,7 +2,7 @@ package general
 
 case class FunEqEquation(source: FunEqSource, left: FunEqExpression, right: FunEqExpression) {
 
-  def isTautology: Boolean = left == right
+  def isTrivial: Boolean = left == right
 
   override def toString: String = left.print(0) + " = " + right.print(0)
 

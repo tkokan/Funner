@@ -8,7 +8,7 @@ object Tester extends App {
   test1()
 
   def test1(): Unit = {
-    val input = "2*f(x+y) = f(3*x) + f(3*y)"
+    val input = "f(x) * f(y) = f(x + y) + x*y"
 
     println("input: " + input)
 
@@ -20,12 +20,7 @@ object Tester extends App {
     println("equation: " + equation)
     println()
 
-    val allEquations = Solver.expand(equation)
-
-    println("Total equations: " + allEquations.size)
-    println()
-
-    for(equation <- allEquations.toList.sortWith(_.toString.length < _.toString.length)) println(equation)
+    Solver.solve(equation)
   }
 
   def test2(): Unit = {

@@ -1,19 +1,20 @@
-package simplifier
+package processor.simplifier
 
 import general.{FunEqExpression, FunEqFunc, FunEqIntLeaf, FunEqNode}
+import processor.PiecewiseProcessor
 
-class ConstantsSimplifier extends AbstractSimplifier {
+object ConstantsSimplifier extends PiecewiseProcessor {
 
   override val description: String = "Simplify constants."
 
-  override def simplify(expression: FunEqExpression): FunEqExpression =
+  final override def process(expression: FunEqExpression): FunEqExpression =
     expression match {
 
-      case FunEqFunc(name, argument) => FunEqFunc(name, simplify(argument))
+      case FunEqFunc(name, argument) => FunEqFunc(name, process(argument))
 
       case FunEqNode(op, left, right) =>
-        val simpleLeft = simplify(left)
-        val simpleRight = simplify(right)
+        val simpleLeft = process(left)
+        val simpleRight = process(right)
 
         (op, simpleLeft, simpleRight) match {
           case ("+", FunEqIntLeaf(a), FunEqIntLeaf(b)) => FunEqIntLeaf(a + b)

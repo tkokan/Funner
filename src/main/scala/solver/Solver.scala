@@ -1,33 +1,21 @@
 package solver
 
 import general.FunEqEquation
+
 import scala.collection.immutable.HashSet
-import simplifier.Simplifier
-import general.Info
 
 object Solver {
 
-  def expand(equation: FunEqEquation): HashSet[FunEqEquation] = expand(HashSet(Simplifier.simplify(equation)))
+  def solve(equation: FunEqEquation): Unit = {
 
-  private def expand(equations: HashSet[FunEqEquation]): HashSet[FunEqEquation] = {
-    def newEquations = equations ++ equations.flatMap(x => expandSingle(x))
+    val solutionCase = new SolutionCase(cases = List(), inputEquations = HashSet(equation),  assumptions = List())
 
-    if (newEquations.size > equations.size) expand(newEquations) else newEquations
+    solutionCase.solve()
+
+    solutionCase.print()
   }
 
-  private def expandSingle(equation: FunEqEquation) = {
-    for (
-      variable <- Info.getAllVariables(equation);
-      value <- -1 to 2
-    ) yield subAndSimplify(equation, variable, value)
-  }
 
-  private def subAndSimplify(equation: FunEqEquation, variable: String, value: Int): FunEqEquation = {
-    val newEquation = Simplifier.simplify(Substitutor.sub(equation, variable, value))
-    if (newEquation.toString == "2 * f(y) = f(0) + f(2 * y)")
-      println(":: " + equation + " --> " + newEquation + " [" + variable + "=" + value + "]")
-    newEquation
-  }
 }
 
 

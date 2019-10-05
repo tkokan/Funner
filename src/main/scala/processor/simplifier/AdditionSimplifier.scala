@@ -1,13 +1,12 @@
-package simplifier
+package processor.simplifier
 
 import general.{FunEqEquation, FunEqNode, FunEqSource}
+import processor.SingleResultProcessor
 
-class AdditionSimplifier extends AbstractSimplifier {
+object AdditionSimplifier extends  SingleResultProcessor {
 
-  override val description: String = "Cancel addition."
-
-  override def simplify(equation: FunEqEquation): FunEqEquation = {
-    val source = FunEqSource(List(equation), description)
+  override def processOneResult(equation: FunEqEquation): FunEqEquation = {
+    val source = FunEqSource(List(equation), "Cancel addition.")
 
     equation match {
       case FunEqEquation(_, FunEqNode("+", l1, r1), FunEqNode("+", l2, r2)) if l1 == l2

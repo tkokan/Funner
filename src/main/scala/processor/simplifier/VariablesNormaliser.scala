@@ -1,21 +1,23 @@
-package simplifier
+package processor.simplifier
 
-import general.{FunEqEquation, FunEqExpression, FunEqFunc, FunEqNode, FunEqSource, FunEqVarLeaf, Info}
+import general._
+import processor.SingleResultProcessor
 
-class VariablesNormaliser extends AbstractSimplifier {
+import scala.annotation.tailrec
+
+object VariablesNormaliser extends SingleResultProcessor {
 
   private val variables = List("x", "y", "z", "w")
 
-  override val description: String = "Normalize variables."
-
-  override def simplify(equation: FunEqEquation): FunEqEquation = {
+  @tailrec
+  final override def processOneResult(equation: FunEqEquation): FunEqEquation = {
     val allVariables = Info.getAllVariables(equation)
 
     val firstPair = allPairs
       .find(p => !allVariables.contains(p._1) && allVariables.contains(p._2))
 
     firstPair match {
-      case Some((first, second)) => simplify(sub(equation, oldName = second, newName = first))
+      case Some((first, second)) => processOneResult(sub(equation, oldName = second, newName = first))
       case None => equation
     }
   }
