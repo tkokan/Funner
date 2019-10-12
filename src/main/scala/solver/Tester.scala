@@ -20,7 +20,7 @@ object Tester extends App {
     println(s"Equation: $equation")
     println()
 
-    Solver.solve(equation)
+    Solver.solve(equation, detailedPrint = true)
   }
 
   def test2(): Unit = {

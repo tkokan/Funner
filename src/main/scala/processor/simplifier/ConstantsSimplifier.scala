@@ -3,6 +3,7 @@ package processor.simplifier
 import general._
 import processor.PiecewiseProcessor
 
+// ToDo: This is obsolete now and needs to be removed.
 object ConstantsSimplifier extends PiecewiseProcessor {
 
   override val description: String = "Simplify constants."
@@ -21,17 +22,14 @@ object ConstantsSimplifier extends PiecewiseProcessor {
           case ("*", FunEqIntLeaf(a), FunEqIntLeaf(b)) => FunEqIntLeaf(a * b)
           case ("+", FunEqIntLeaf(0), x) => x
 
-          // this won't be necessary for normalised equations ("smaller" side on the left side)
           case ("+", x, FunEqIntLeaf(0)) => x
 
           case ("*", FunEqIntLeaf(1), x) => x
 
-          // also won't be necessary
           case ("*", x, FunEqIntLeaf(1)) => x
 
           case ("*", FunEqIntLeaf(0), _) => FunEqIntLeaf(0)
 
-          // also won't be necessary
           case ("*", _, FunEqIntLeaf(0)) => FunEqIntLeaf(0)
 
           case _ => FunEqNode(op, simpleLeft, simpleRight)

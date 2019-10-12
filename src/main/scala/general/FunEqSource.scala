@@ -1,3 +1,6 @@
 package general
 
-case class FunEqSource(parents: List[FunEqEquation], description: String = "")
+case class FunEqSource(description: String, parents: List[FunEqEquation] = Nil) {
+
+  override def toString: String = description
+}

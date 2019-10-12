@@ -7,12 +7,8 @@ abstract class PiecewiseProcessor extends SingleResultProcessor {
   val description: String
 
   final override def processOneResult(equation: FunEqEquation): FunEqEquation = equation match {
-    case FunEqEquation(_, left, right) =>
-      FunEqEquation(
-        FunEqSource(List(equation), description),
-        process(left),
-        process(right)
-      )
+    case FunEqEquation(_, left, right, _)
+    => FunEqEquation(equation.source, process(left), process(right), equation.isEquality)
   }
 
   def process(expression: FunEqExpression): FunEqExpression

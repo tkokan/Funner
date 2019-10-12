@@ -1,22 +1,21 @@
 package processor.simplifier
 
 import general._
-import processor.SingleResultProcessor
 import scala.annotation.tailrec
 
-object VariablesNormaliser extends SingleResultProcessor {
+object VariablesNormaliser extends Simplifier {
 
   private val variables = List("x", "y", "z", "w")
 
   @tailrec
-  final override def processOneResult(equation: FunEqEquation): FunEqEquation = {
+  final override def simplify(equation: FunEqEquation): FunEqEquation = {
     val allVariables = Info.getAllVariables(equation)
 
     val firstPair = allPairs
       .find(p => !allVariables.contains(p._1) && allVariables.contains(p._2))
 
     firstPair match {
-      case Some((first, second)) => processOneResult(sub(equation, oldName = second, newName = first))
+      case Some((first, second)) => simplify(sub(equation, oldName = second, newName = first))
       case None => equation
     }
   }
@@ -31,11 +30,13 @@ object VariablesNormaliser extends SingleResultProcessor {
 
   private def sub(equation: FunEqEquation, oldName: String, newName: String): FunEqEquation = {
     equation match {
-      case FunEqEquation(_, left, right)
+      case FunEqEquation(_, left, right, isEquality)
       => FunEqEquation(
-        FunEqSource(List(equation), s"Rename variable: $oldName -> $newName"),
+        FunEqSource(s"Rename variable: [$oldName -> $newName] :: $equation", List(equation)),
         sub(left, oldName, newName),
-        sub(right, oldName, newName))
+        sub(right, oldName, newName),
+        isEquality
+      )
     }
   }
 

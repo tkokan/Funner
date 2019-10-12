@@ -6,7 +6,7 @@ import general._
 class FunEqParser extends JavaTokenParsers with RegexParsers {
 
   def eq: Parser[FunEqEquation] = expr~"="~expr ^^
-    { case left~"="~right => FunEqEquation(FunEqSource(List(), "Parsed."), left, right) }
+    { case left~"="~right => FunEqEquation(FunEqSource("Original."), left, right, isEquality = true) }
 
   def expr: Parser[FunEqExpression] = (
     term~("+"|"-")~term ^^ { case left~op~right => FunEqNode(op, left, right) }

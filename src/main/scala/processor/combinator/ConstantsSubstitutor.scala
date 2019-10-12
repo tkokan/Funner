@@ -2,9 +2,13 @@ package processor.combinator
 
 import general._
 import processor.IndependentProcessor
+import processor.simplifier.BigSimplifier
+
 import scala.collection.immutable.HashSet
 
-object Substitutor extends IndependentProcessor {
+
+// ToDo: This should be using the other equation substitution
+object ConstantsSubstitutor extends IndependentProcessor {
 
   override def process(equation: FunEqEquation): HashSet[FunEqEquation] = {
     val newEquations = {
@@ -19,11 +23,13 @@ object Substitutor extends IndependentProcessor {
 
   private def sub(equation: FunEqEquation, variable: String, value: Int): FunEqEquation = {
     equation match {
-      case FunEqEquation(_, left, right)
+      case FunEqEquation(_, left, right, isEquality)
         => FunEqEquation(
-          FunEqSource(List(equation), s"Substitution: $variable = $value"),
+          FunEqSource(s"Substitution [$variable <- $value] in $equation", List(equation)),
           sub(left, variable, value),
-          sub(right, variable, value))
+          sub(right, variable, value),
+          isEquality
+      )
     }
   }
 
@@ -35,10 +41,6 @@ object Substitutor extends IndependentProcessor {
     case FunEqIntLeaf(v) => FunEqIntLeaf(v)
   }
 
-  private def subAndSimplify(equation: FunEqEquation, variable: String, value: Int): FunEqEquation = {
-    val newEquation = sub(equation, variable, value)
-    if (newEquation.toString == "2 * f(y) = f(0) + f(2 * y)")
-      println(s":: $equation --> $newEquation [$variable=$value]")
-    newEquation
-  }
+  private def subAndSimplify(equation: FunEqEquation, variable: String, value: Int): FunEqEquation =
+    new BigSimplifier().simplify(sub(equation, variable, value))
 }

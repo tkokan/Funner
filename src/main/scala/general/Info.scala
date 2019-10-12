@@ -8,8 +8,9 @@ object Info {
     case FunEqEquation(_, left, right) => getAllVariables(left) ++ getAllVariables(right)
   }
 
-  private def getAllVariables(expr: FunEqExpression): HashSet[String] = expr match {
+  def getAllVariables(expr: FunEqExpression): HashSet[String] = expr match {
     case FunEqVarLeaf(v) => HashSet(v)
+    //case FunEqNegation(x) => getAllVariables(x)
     case FunEqNode(_, left, right) => getAllVariables(left) ++ getAllVariables(right)
     case FunEqFunc(_, argument) => getAllVariables(argument)
     case FunEqIntLeaf(_) => HashSet()
