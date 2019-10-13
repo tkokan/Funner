@@ -1,6 +1,6 @@
 package processor.combinator
 
-import general.{FunEqEquation, FunEqExpression, FunEqFunc, FunEqNode, FunEqSource}
+import general._
 import processor.Processor
 import processor.simplifier.BigSimplifier
 
@@ -23,23 +23,27 @@ object EquationsSubsitutor extends Processor {
     val source = FunEqSource(s"EquationsSubsitutor: $from -> $into", List(into, from))
 
     from match {
-      case FunEqEquation(_, left, right, true) if left.complexity < right.complexity
-      => HashSet(sub(source, into, right, left))
+      case FunEqEquation(_, left, right, true) if left.complexity < right.complexity =>
+        HashSet(sub(source, into, right, left))
 
-      case FunEqEquation(_, left, right, true) if left.complexity > right.complexity
-      => HashSet(sub(source, into, left, right))
+      case FunEqEquation(_, left, right, true) if left.complexity > right.complexity =>
+        HashSet(sub(source, into, left, right))
 
-      case FunEqEquation(_, left, right, true)
-      => HashSet(sub(source, into, left, right), sub(source, into, right, left))
+      case FunEqEquation(_, left, right, true) =>
+        HashSet(sub(source, into, left, right), sub(source, into, right, left))
     }
   }
 
-  private def sub(src: FunEqSource, eq: FunEqEquation, oldExpr: FunEqExpression, newExpr: FunEqExpression): FunEqEquation = {
+  private def sub(
+    src: FunEqSource,
+    eq: FunEqEquation,
+    oldExpr: FunEqExpression,
+    newExpr: FunEqExpression): FunEqEquation = {
+
     eq match {
-      case FunEqEquation(_, left, right, true)
-      => val newEquation = new BigSimplifier().simplify(
-        FunEqEquation(src, sub(left, oldExpr, newExpr), sub(right, oldExpr, newExpr), isEquality = true)
-      )
+      case FunEqEquation(_, left, right, true) =>
+        val newEquation = new BigSimplifier()
+          .simplify(FunEqEquation(src, sub(left, oldExpr, newExpr), sub(right, oldExpr, newExpr), isEquality = true))
 
       // make sure we don't override source unless something had changed
       if (newEquation == eq)
@@ -49,9 +53,12 @@ object EquationsSubsitutor extends Processor {
     }
   }
 
-  private def sub(expression: FunEqExpression, oldExpr: FunEqExpression, newExpr: FunEqExpression): FunEqExpression = {
-    if (expression == oldExpr)
-      newExpr
+  private def sub(
+    expression: FunEqExpression,
+    oldExpr: FunEqExpression,
+    newExpr: FunEqExpression): FunEqExpression = {
+
+    if (expression == oldExpr) newExpr
     else expression match {
       case FunEqFunc(name, argument) => FunEqFunc(name, sub(argument, oldExpr, newExpr))
       case FunEqNode(op, left, right) => FunEqNode(op, sub(left, oldExpr, newExpr), sub(right, oldExpr, newExpr))

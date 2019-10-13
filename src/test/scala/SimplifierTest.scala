@@ -1,4 +1,4 @@
-import general.{FunEqEquation, FunEqFunc, FunEqIntLeaf, FunEqNode, FunEqSource, FunEqVarLeaf}
+import general.{BinaryOperation, FunEqEquation, FunEqFunc, FunEqIntLeaf, FunEqNode, FunEqSource, FunEqVarLeaf}
 import org.scalatest.FunSuite
 import processor.simplifier.BigSimplifier
 
@@ -17,7 +17,7 @@ class SimplifierTest extends FunSuite {
 
   test("BigSimplifier - constants addition 1") {
     val x = FunEqVarLeaf("x")
-    val eq1 = FunEqEquation(source, x, FunEqNode("+", two, two), isEquality = true)
+    val eq1 = FunEqEquation(source, x, FunEqNode(BinaryOperation.+, two, two), isEquality = true)
 
     val simplified = new BigSimplifier().process(HashSet(eq1))
 
@@ -34,7 +34,7 @@ class SimplifierTest extends FunSuite {
     val eq1 = FunEqEquation(
       source,
       y,
-      FunEqNode("+", two, FunEqNode("+", x, three)),
+      FunEqNode(BinaryOperation.+, two, FunEqNode(BinaryOperation.+, x, three)),
       isEquality = true
     )
 
@@ -43,7 +43,7 @@ class SimplifierTest extends FunSuite {
     val correct = FunEqEquation(
       source,
       y,
-      FunEqNode("+", x, five),
+      FunEqNode(BinaryOperation.+, x, five),
       isEquality = true
     )
 
@@ -56,10 +56,10 @@ class SimplifierTest extends FunSuite {
 
     val eq1 = FunEqEquation(
       source,
-      FunEqNode("*", FunEqFunc("f", two), FunEqFunc("f", two)),
-      FunEqNode("+",
-        FunEqFunc("f", FunEqNode("+", two, two)),
-        FunEqNode("*", two, two)
+      FunEqNode(BinaryOperation.*, FunEqFunc("f", two), FunEqFunc("f", two)),
+      FunEqNode(BinaryOperation.+,
+        FunEqFunc("f", FunEqNode(BinaryOperation.+, two, two)),
+        FunEqNode(BinaryOperation.*, two, two)
       ),
       isEquality = true
     )
@@ -68,8 +68,8 @@ class SimplifierTest extends FunSuite {
 
     val correct = FunEqEquation(
       source,
-      FunEqNode("*", FunEqFunc("f", two), FunEqFunc("f", two)),
-      FunEqNode("+",
+      FunEqNode(BinaryOperation.*, FunEqFunc("f", two), FunEqFunc("f", two)),
+      FunEqNode(BinaryOperation.+,
         FunEqFunc("f", four),
         four
       ),
@@ -97,8 +97,8 @@ class SimplifierTest extends FunSuite {
 
     val eq1 = FunEqEquation(
       source,
-      FunEqNode("+", five, FunEqFunc("f", FunEqVarLeaf("x"))),
-      FunEqNode("+", four, FunEqFunc("f", FunEqVarLeaf("y"))),
+      FunEqNode(BinaryOperation.+, five, FunEqFunc("f", FunEqVarLeaf("x"))),
+      FunEqNode(BinaryOperation.+, four, FunEqFunc("f", FunEqVarLeaf("y"))),
       isEquality = true
     )
 
@@ -106,7 +106,7 @@ class SimplifierTest extends FunSuite {
 
     val correct = FunEqEquation(
       source,
-      FunEqNode("+", one, FunEqFunc("f", FunEqVarLeaf("x"))),
+      FunEqNode(BinaryOperation.+, one, FunEqFunc("f", FunEqVarLeaf("x"))),
       FunEqFunc("f", FunEqVarLeaf("y")),
       isEquality = true
     )

@@ -63,3 +63,5 @@ fabric.properties
 /target/*
 /project/*/*.cache
 /project/project/*
+
+/src/main/scala/scratchpad.sc

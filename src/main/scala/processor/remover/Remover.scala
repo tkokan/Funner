@@ -26,7 +26,7 @@ object Remover extends Processor {
   }
 
   @tailrec
-  private def insertAll(functionValues: List[FunEqEquation], equation: FunEqEquation): FunEqEquation =
+  private def insertAll(functionValues: List[FunEqEquation], equation: FunEqEquation): FunEqEquation = {
     if(equation.isEquality) {
       functionValues match {
         case Nil => equation
@@ -35,6 +35,7 @@ object Remover extends Processor {
     }
     else
       equation
+  }
 
   private def insertSingle(into: FunEqEquation, from: FunEqEquation): FunEqEquation = {
     val multi = EquationsSubsitutor.insert(into, from).toList

@@ -1,6 +1,6 @@
 package processor.simplifier
 
-import general.{FunEqEquation, FunEqExpression, FunEqIntLeaf, FunEqSource}
+import general._
 import processor.AuxProcessor.{aggregate, getOperands}
 
 import scala.annotation.tailrec
@@ -8,8 +8,8 @@ import scala.annotation.tailrec
 class CancelMultiplicationSimplifier(assumptions: List[FunEqEquation]) extends Simplifier {
 
   final override def simplify(equation: FunEqEquation): FunEqEquation = {
-    val (intsLhs, otherLhs) = getOperands("*", equation.left).partition(isIntLeaf)
-    val (intsRhs, otherRhs) = getOperands("*", equation.right).partition(isIntLeaf)
+    val (intsLhs, otherLhs) = getOperands(BinaryOperation.*, equation.left).partition(isIntLeaf)
+    val (intsRhs, otherRhs) = getOperands(BinaryOperation.*, equation.right).partition(isIntLeaf)
 
     val productLhs = intsLhs.map({ case FunEqIntLeaf(v) => v }).product
     val productRhs = intsRhs.map({ case FunEqIntLeaf(v) => v }).product
@@ -27,13 +27,6 @@ class CancelMultiplicationSimplifier(assumptions: List[FunEqEquation]) extends S
         case _ => FunEqSource(s"Cancel multiplication in ${equation}.", equation :: assumptionsUsed)
       }
 
-//      val source = FunEqSource(par)
-//      if
-//      } (somethingToCancel)
-//        FunEqSource(List(equation), "Used assumptions.")
-//      else
-//        equation.source
-
       FunEqEquation(
         source,
         getExpression(productLhs / d, canceledLhs),
@@ -45,8 +38,8 @@ class CancelMultiplicationSimplifier(assumptions: List[FunEqEquation]) extends S
 
   private def getExpression(constant: Int, expressions: List[FunEqExpression]): FunEqExpression = constant match {
     case 0 => FunEqIntLeaf(0)
-    case 1 => aggregate("*", expressions, 1)
-    case a => aggregate("*", FunEqIntLeaf(a) :: expressions, 1)
+    case 1 => aggregate(BinaryOperation.*, expressions)
+    case a => aggregate(BinaryOperation.*, FunEqIntLeaf(a) :: expressions)
     //case a if a < 0 => FunEqNegation(getExpression(-a, expressions))
   }
 
@@ -66,11 +59,6 @@ class CancelMultiplicationSimplifier(assumptions: List[FunEqEquation]) extends S
     (lhs diff expressionsToBeCanceled, rhs diff expressionsToBeCanceled, assumptionsToUse)
   }
 
-//  private def canBeCanceled(expression: FunEqExpression): Boolean = {
-//    val neededAssumption = FunEqEquation(FunEqSource(), expression, FunEqIntLeaf(0), isEquality = false)
-//    assumptions.contains(neededAssumption)
-//  }
-
   private def isIntLeaf(expression: FunEqExpression): Boolean = expression match {
     case FunEqIntLeaf(_) => true
     case _ => false
@@ -82,31 +70,3 @@ class CancelMultiplicationSimplifier(assumptions: List[FunEqEquation]) extends S
     case _ => gcd(b, a%b)
   }
 }
-
-
-//package processor.simplifier
-//
-//import general._
-//
-//object CancelMultiplicationSimplifier extends Simplifier {
-//
-//  final override def simplify(equation: FunEqEquation): FunEqEquation = {
-//    val source = FunEqSource(List(equation), "Cancel multiplication.")
-//
-//    equation match {
-//      case FunEqEquation(_, FunEqNode("*", FunEqIntLeaf(a), x), FunEqNode("*", FunEqIntLeaf(b), y)) if a == b && a != 0
-//      => FunEqEquation(source, x, y)
-//
-//      case FunEqEquation(_, FunEqNode("*", FunEqIntLeaf(a), x), FunEqNode("*", y, FunEqIntLeaf(b))) if a == b && a != 0
-//      => FunEqEquation(source, x, y)
-//
-//      case FunEqEquation(_, FunEqNode("*", x, FunEqIntLeaf(a)), FunEqNode("*", FunEqIntLeaf(b), y)) if a == b && a != 0
-//      => FunEqEquation(source, x, y)
-//
-//      case FunEqEquation(_, FunEqNode("*", x, FunEqIntLeaf(a)), FunEqNode("*", y, FunEqIntLeaf(b))) if a == b && a != 0
-//      => FunEqEquation(source, x, y)
-//
-//      case other => other
-//    }
-//  }
-//}

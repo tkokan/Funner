@@ -1,6 +1,7 @@
 package processor
 
 import general.FunEqEquation
+
 import scala.collection.immutable.HashSet
 
 abstract class IndependentProcessor extends Processor {

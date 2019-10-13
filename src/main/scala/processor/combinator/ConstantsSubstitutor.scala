@@ -23,13 +23,12 @@ object ConstantsSubstitutor extends IndependentProcessor {
 
   private def sub(equation: FunEqEquation, variable: String, value: Int): FunEqEquation = {
     equation match {
-      case FunEqEquation(_, left, right, isEquality)
-        => FunEqEquation(
+      case FunEqEquation(_, left, right, isEquality) =>
+        FunEqEquation(
           FunEqSource(s"Substitution [$variable <- $value] in $equation", List(equation)),
           sub(left, variable, value),
           sub(right, variable, value),
-          isEquality
-      )
+          isEquality)
     }
   }
 

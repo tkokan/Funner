@@ -1,4 +1,4 @@
-import general.{FunEqEquation, FunEqFunc, FunEqIntLeaf, FunEqNode, FunEqSource}
+import general.{BinaryOperation, FunEqEquation, FunEqFunc, FunEqIntLeaf, FunEqNode, FunEqSource}
 import org.scalatest.FunSuite
 import processor.simplifier.BigSimplifier
 
@@ -14,7 +14,7 @@ class CancelMultiplicationSimplifierTest extends FunSuite {
     val fMinusOne = FunEqFunc("f", FunEqIntLeaf(-1))
 
     val eq1 = FunEqEquation(source,
-      FunEqNode("*", fMinusOne, fOne),
+      FunEqNode(BinaryOperation.*, fMinusOne, fOne),
       zero,
       isEquality = true
     )
@@ -33,7 +33,7 @@ class CancelMultiplicationSimplifierTest extends FunSuite {
     val fMinusOne = FunEqFunc("f", FunEqIntLeaf(-1))
 
     val eq1 = FunEqEquation(source,
-      FunEqNode("*", fTwo, fMinusOne),
+      FunEqNode(BinaryOperation.*, fTwo, fMinusOne),
       FunEqIntLeaf(-2),
       isEquality = true
     )

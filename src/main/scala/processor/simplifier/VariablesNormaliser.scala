@@ -40,11 +40,12 @@ object VariablesNormaliser extends Simplifier {
     }
   }
 
-  private def sub(expression: FunEqExpression, oldName: String, newName: String): FunEqExpression =
+  private def sub(expression: FunEqExpression, oldName: String, newName: String): FunEqExpression = {
     expression match {
       case FunEqVarLeaf(`oldName`) => FunEqVarLeaf(newName)
       case FunEqNode(op, left, right) => FunEqNode(op, sub(left, oldName, newName), sub(right, oldName, newName))
       case FunEqFunc(name, argument) => FunEqFunc(name, sub(argument, oldName, newName))
       case other => other
     }
+  }
 }

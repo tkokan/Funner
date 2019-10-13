@@ -6,6 +6,5 @@ object Combinator extends HighLevelProcessor {
 
   override protected val processors: List[Processor] = List(
     ConstantsSubstitutor,
-    EquationsSubsitutor
-  )
+    EquationsSubsitutor)
 }

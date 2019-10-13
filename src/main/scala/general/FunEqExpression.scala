@@ -1,5 +1,7 @@
 package general
 
+import general.BinaryOperation.BinaryOperation
+
 sealed abstract class FunEqExpression {
   def print(level: Int): String
 
@@ -11,9 +13,11 @@ sealed abstract class FunEqExpression {
 case class FunEqIntLeaf(value: Int) extends FunEqExpression {
   def print(level: Int): String = if (value >= 0 || level == 0) value.toString else s"($value)"
 
-  override def equals(obj: Any): Boolean = obj match {
-    case other: FunEqIntLeaf => value == other.value
-    case _ => false
+  override def equals(obj: Any): Boolean = {
+    obj match {
+      case other: FunEqIntLeaf => value == other.value
+      case _ => false
+    }
   }
 
   override def complexity: Int = 1
@@ -22,31 +26,21 @@ case class FunEqIntLeaf(value: Int) extends FunEqExpression {
 case class FunEqVarLeaf(name: String) extends FunEqExpression {
   def print(level: Int): String = name
 
-  override def equals(obj: Any): Boolean = obj match {
-    case other: FunEqVarLeaf => name == other.name
-    case _ => false
+  override def equals(obj: Any): Boolean = {
+    obj match {
+      case other: FunEqVarLeaf => name == other.name
+      case _ => false
+    }
   }
 
   override def complexity: Int = 1
 }
 
-//case class FunEqNegation(expression: FunEqExpression) extends FunEqExpression {
-//  def print(level: Int): String = expression match {
-//    case FunEqNode(_, _, _) => s"-($expression)"
-//    case FunEqNegation(_) => s"-($expression)"
-//    case FunEqIntLeaf(a) if a <= 0 => a.toString
-//    case _ => s"-$expression"
-//  }
-//
-//  override def equals(obj: Any): Boolean = obj match {
-//    case other: FunEqNegation => expression == other.expression
-//    case _ => false
-//  }
-//
-//  override def complexity: Int = expression.complexity + 1
-//}
+case class FunEqNode(
+  op: BinaryOperation,
+  left: FunEqExpression,
+  right: FunEqExpression) extends FunEqExpression {
 
-case class FunEqNode(op: String, left: FunEqExpression, right: FunEqExpression) extends FunEqExpression {
   def print(level: Int): String = {
     val inner = s"${left.print(level + 1)} $op ${right.print(level + 1)}"
     if (level == 0)
@@ -55,11 +49,13 @@ case class FunEqNode(op: String, left: FunEqExpression, right: FunEqExpression) 
       s"($inner)"
   }
 
-  override def equals(obj: Any): Boolean = obj match {
-    case other: FunEqNode
-    => ((op == other.op)
-      && ((left == other.left && right == other.right) || (right == other.left && left == other.right)))
-    case _ => false
+  override def equals(obj: Any): Boolean = {
+    obj match {
+      case other: FunEqNode
+      => ((op == other.op)
+        && ((left == other.left && right == other.right) || (right == other.left && left == other.right)))
+      case _ => false
+    }
   }
 
   override def hashCode(): Int = {

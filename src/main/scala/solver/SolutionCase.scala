@@ -1,7 +1,7 @@
 package solver
 
 import general.{FunEqEquation, FunEqIntLeaf, FunEqSource}
-import processor.{AuxProcessor, MainProcessor}
+import processor.{AuxProcessor, BigProcessor}
 import solver.Status._
 
 import scala.collection.immutable.HashSet
@@ -16,7 +16,7 @@ class SolutionCase(cases: List[String], inputEquations: HashSet[FunEqEquation], 
 
   def solve(): Unit = {
 
-    val processedEquations = new MainProcessor(assumptions)
+    val processedEquations = new BigProcessor(assumptions)
       .process(inputEquations ++ assumptions)
 
     equations = Some(processedEquations)
@@ -40,8 +40,6 @@ class SolutionCase(cases: List[String], inputEquations: HashSet[FunEqEquation], 
                 )
               )
             )
-
-        case None =>
       }
 
       for (child <- children) child.solve()
@@ -50,9 +48,11 @@ class SolutionCase(cases: List[String], inputEquations: HashSet[FunEqEquation], 
 
   def name: String = nameFromCases(cases)
 
-  def nameFromCases(cases: List[String]): String = cases.mkString("-") match {
-    case "" => "Main"
-    case other => other
+  def nameFromCases(cases: List[String]): String = {
+    cases.mkString("-") match {
+      case "" => "Main"
+      case other => other
+    }
   }
 
   def print(detailed: Boolean): Unit = {

@@ -1,7 +1,8 @@
 package parser
 
-import scala.util.parsing.combinator._
 import general._
+
+import scala.util.parsing.combinator._
 
 class FunEqParser extends JavaTokenParsers with RegexParsers {
 
@@ -9,12 +10,12 @@ class FunEqParser extends JavaTokenParsers with RegexParsers {
     { case left~"="~right => FunEqEquation(FunEqSource("Original."), left, right, isEquality = true) }
 
   def expr: Parser[FunEqExpression] = (
-    term~("+"|"-")~term ^^ { case left~op~right => FunEqNode(op, left, right) }
+    term~("+"|"-")~term ^^ { case left~op~right => FunEqNode(BinaryOperation.withName(op), left, right) }
       | term
     )
 
   def term: Parser[FunEqExpression] = (
-    factor~"*"~factor ^^ { case left ~ "*" ~ right => FunEqNode("*", left, right) }
+    factor~"*"~factor ^^ { case left ~ "*" ~ right => FunEqNode(BinaryOperation.*, left, right) }
       | factor
     )
 
