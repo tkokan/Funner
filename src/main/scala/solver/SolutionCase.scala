@@ -1,6 +1,6 @@
 package solver
 
-import general.{FunEqEquation, FunEqIntLeaf, FunEqSource}
+import general.{FunEqEquation, FunEqExpression, FunEqFunc, FunEqIntLeaf, FunEqNode, FunEqSource, FunEqVarLeaf, Info}
 import processor.{AuxProcessor, BigProcessor}
 import solver.Status._
 
@@ -11,8 +11,8 @@ class SolutionCase(cases: List[String], inputEquations: HashSet[FunEqEquation], 
   private val maxDepth = 3
   private var equations: Option[HashSet[FunEqEquation]] = None
   private var children: List[SolutionCase] = Nil
-
-  def status: Status = Status.Unsolved
+  private var status: Status = Status.Unsolved
+  private var solutions: HashSet[FunEqEquation] = HashSet()
 
   def solve(): Unit = {
 
@@ -21,27 +21,46 @@ class SolutionCase(cases: List[String], inputEquations: HashSet[FunEqEquation], 
 
     equations = Some(processedEquations)
 
-    if (cases.length < maxDepth) {
-      val assumption = AuxProcessor.getBestAssumption(processedEquations)
+    if(processedEquations.exists(_.isImpossible)) status = Status.Impossible
+    else {
+      val sols = processedEquations.filter(isSolution)
 
-      assumption match {
-        case Some(x) =>
-          children = List(true, false)
-            .zipWithIndex
-            .map(y =>
-              new SolutionCase(
-                cases :+ (y._2 + 1).toString,
-                processedEquations,
-                assumptions :+ FunEqEquation(
-                  FunEqSource(description = s"Assumption for Case ${nameFromCases(cases :+ (y._2 + 1).toString)}."),
-                  x,
-                  FunEqIntLeaf(0),
-                  y._1)))
+      if (sols.isEmpty) {
 
-        case None =>
+        if (cases.length < maxDepth) {
+          val assumption = AuxProcessor.getBestAssumption(processedEquations)
+
+          assumption match {
+            case Some(x) =>
+              children = List(true, false)
+                .zipWithIndex
+                .map(y =>
+                  new SolutionCase(
+                    cases :+ (y._2 + 1).toString,
+                    processedEquations,
+                    assumptions :+ FunEqEquation(
+                      FunEqSource(description = s"Assumption for Case ${nameFromCases(cases :+ (y._2 + 1).toString)}."),
+                      x,
+                      FunEqIntLeaf(0),
+                      y._1)))
+
+            case None =>
+          }
+
+          for (child <- children) child.solve()
+
+          solutions = HashSet() ++ children.flatMap(_.solutions)
+        }
       }
+      else {
+        solutions = sols
+        status = Status.Solved
+      }
+    }
 
-      for (child <- children) child.solve()
+    if (children.nonEmpty) {
+      if (children.forall(_.status == Status.Impossible)) status = Status.Impossible
+      else if (!children.exists(_.status == Status.Unsolved)) status = Status.Solved
     }
   }
 
@@ -55,7 +74,7 @@ class SolutionCase(cases: List[String], inputEquations: HashSet[FunEqEquation], 
   }
 
   def print(detailed: Boolean): Unit = {
-    println(s"Case: $name")
+    println(s"Case: $name - $status")
 
     assumptions match {
       case Nil => println("\tNo assumptions.")
@@ -73,6 +92,24 @@ class SolutionCase(cases: List[String], inputEquations: HashSet[FunEqEquation], 
     for (child <- children) {
       println()
       child.print(detailed)
+    }
+  }
+
+  private def isSolution(equation: FunEqEquation): Boolean = {
+    equation match {
+      case FunEqEquation(_, FunEqVarLeaf("x"), right, true) if xOnly(right) => true
+      case _ => false
+    }
+  }
+
+  private def xOnly(expression: FunEqExpression): Boolean =
+      (Info.getAllVariables(expression) diff HashSet("x")).isEmpty && !hasFunctionCalls(expression)
+
+  private def hasFunctionCalls(expression: FunEqExpression): Boolean = {
+    expression match {
+      case FunEqFunc(_, _) => true
+      case FunEqNode(_, left, right) => hasFunctionCalls(left) || hasFunctionCalls(right)
+      case _ => false
     }
   }
 

@@ -14,13 +14,16 @@ abstract class HighLevelProcessor extends Processor {
   @tailrec
   final override def process(equations: HashSet[FunEqEquation]): HashSet[FunEqEquation] = {
 
-    val processed = composed(equations)
+    if (equations.exists(_.isImpossible)) equations
+    else {
+      val processed = composed(equations)
 
-    if (processed == equations) processed
-    else if (processed.size > maxEquations) {
+      if (processed == equations) processed
+      else if (processed.size > maxEquations) {
         println(s"Giving up - ${processed.size} equations is too many.")
         processed
-    } else process(processed)
+      } else process(processed)
+    }
   }
 
   // This needs to be lazy so that processors are populated before this gets executed.

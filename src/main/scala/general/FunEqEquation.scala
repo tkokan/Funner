@@ -5,9 +5,17 @@ case class FunEqEquation(source: FunEqSource, left: FunEqExpression, right: FunE
   private def sign: String = if(isEquality) "=" else "!="
 
   def isTrivial: Boolean = {
-    if (isEquality) left == right
-    else (left, right) match {
-      case (FunEqIntLeaf(a), FunEqIntLeaf(b)) if a != b => true
+    (left, right, isEquality) match {
+      case (l, r, true) => l == r
+      case (FunEqIntLeaf(a), FunEqIntLeaf(b), false) if a != b => true
+      case _ => false
+    }
+  }
+
+  def isImpossible: Boolean = {
+    (left, right, isEquality) match {
+      case (FunEqIntLeaf(a), FunEqIntLeaf(b), true) if a != b => true
+      case (FunEqIntLeaf(a), FunEqIntLeaf(b), false) if a == b => true
       case _ => false
     }
   }
