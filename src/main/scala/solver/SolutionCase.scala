@@ -36,10 +36,9 @@ class SolutionCase(cases: List[String], inputEquations: HashSet[FunEqEquation], 
                   FunEqSource(description = s"Assumption for Case ${nameFromCases(cases :+ (y._2 + 1).toString)}."),
                   x,
                   FunEqIntLeaf(0),
-                  y._1
-                )
-              )
-            )
+                  y._1)))
+
+        case None =>
       }
 
       for (child <- children) child.solve()
