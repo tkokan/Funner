@@ -9,7 +9,8 @@ object Tester extends App {
   test1()
 
   def test1(): Unit = {
-    val input = "f(x) * f(y) = f(x + y) + x*y"
+    //val input = "f(x) * f(y) = f(x + y) + x*y"
+    val input = "f(x + y) + f(x)*f(y) = f(x*y) + (f(x) + f(y))"
 
     println(s"Input: $input")
 

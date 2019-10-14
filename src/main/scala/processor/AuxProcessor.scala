@@ -2,6 +2,7 @@ package processor
 
 import general.BinaryOperation.BinaryOperation
 import general._
+import processor.simplifier.BigSimplifier
 
 import scala.annotation.tailrec
 import scala.collection.immutable.HashSet
@@ -84,5 +85,59 @@ object AuxProcessor {
     HashSet() ++ getOperands(BinaryOperation.*, expression).filter(constantsOnly)
 
   private def constantsOnly(expression: FunEqExpression): Boolean =
-    Info.getAllVariables(expression).isEmpty
+    AuxProcessor.getAllVariables(expression).isEmpty
+
+  def substitute(
+    equation: FunEqEquation,
+    from: FunEqExpression,
+    to: FunEqExpression,
+    possibleNewSource: FunEqSource): FunEqEquation = {
+
+    val newEquation = FunEqEquation(
+      possibleNewSource,
+      substitute(equation.left, from, to),
+      substitute(equation.right, from, to),
+      equation.isEquality)
+
+    val simplifiedNew = new BigSimplifier().simplify(newEquation)
+
+    // make sure we don't override the source if nothing had changed
+    if (simplifiedNew == equation) equation
+    else simplifiedNew
+  }
+
+  def substitute(expression: FunEqExpression, from: FunEqExpression, to: FunEqExpression): FunEqExpression = {
+    expression match {
+      case e if e == from => to
+      case FunEqFunc(name, e) => FunEqFunc(name, substitute(e, from, to))
+      case FunEqNode(op, left, right) => FunEqNode(op, substitute(left, from, to), substitute(right, from, to))
+      case _ => expression
+    }
+  }
+
+  def getAllVariables(equation: FunEqEquation): HashSet[String] = {
+    equation match {
+      case FunEqEquation(_, left, right, _) => getAllVariables(left) ++ getAllVariables(right)
+    }
+  }
+
+  def getAllVariables(expr: FunEqExpression): HashSet[String] = {
+    expr match {
+      case FunEqVarLeaf(v) => HashSet(v)
+      case FunEqNode(_, left, right) => getAllVariables(left) ++ getAllVariables(right)
+      case FunEqFunc(_, argument) => getAllVariables(argument)
+      case FunEqIntLeaf(_) => HashSet()
+    }
+  }
+
+  def xOnly(expression: FunEqExpression): Boolean =
+    (AuxProcessor.getAllVariables(expression) diff HashSet("x")).isEmpty && !hasFunctionCalls(expression)
+
+  def hasFunctionCalls(expression: FunEqExpression): Boolean = {
+    expression match {
+      case FunEqFunc(_, _) => true
+      case FunEqNode(_, left, right) => hasFunctionCalls(left) || hasFunctionCalls(right)
+      case _ => false
+    }
+  }
 }

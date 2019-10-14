@@ -1,6 +1,8 @@
 package processor.simplifier
 
 import general._
+import processor.AuxProcessor
+
 import scala.annotation.tailrec
 
 object VariablesNormaliser extends Simplifier {
@@ -9,7 +11,7 @@ object VariablesNormaliser extends Simplifier {
 
   @tailrec
   final override def simplify(equation: FunEqEquation): FunEqEquation = {
-    val allVariables = Info.getAllVariables(equation)
+    val allVariables = AuxProcessor.getAllVariables(equation)
 
     val firstPair = allPairs
       .find(p => !allVariables.contains(p._1) && allVariables.contains(p._2))

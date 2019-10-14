@@ -10,6 +10,8 @@ import scala.collection.immutable.HashSet
 object Remover extends Processor {
   override def process(equations: HashSet[FunEqEquation]): HashSet[FunEqEquation] = {
 
+    println(s"Remover :: ${equations.size}")
+
     val (functionValues, otherEquations) = equations.partition(isFunctionValue)
 
     val processedEquations = otherEquations
@@ -30,15 +32,15 @@ object Remover extends Processor {
     if(equation.isEquality) {
       functionValues match {
         case Nil => equation
-        case v :: vs => insertAll(vs, insertSingle(into = equation, from = v))
+        case v :: vs => insertAll(vs, insertSingle(from = v, into = equation))
       }
     }
     else
       equation
   }
 
-  private def insertSingle(into: FunEqEquation, from: FunEqEquation): FunEqEquation = {
-    val multi = EquationsSubsitutor.insert(into, from).toList
+  private def insertSingle(from: FunEqEquation, into: FunEqEquation): FunEqEquation = {
+    val multi = EquationsSubsitutor.insert(from, into).toList
 
     multi match {
       case List(a) => a

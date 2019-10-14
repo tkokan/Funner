@@ -1,6 +1,6 @@
 package solver
 
-import general.{FunEqEquation, FunEqExpression, FunEqFunc, FunEqIntLeaf, FunEqNode, FunEqSource, FunEqVarLeaf, Info}
+import general._
 import processor.{AuxProcessor, BigProcessor}
 import solver.Status._
 
@@ -16,14 +16,18 @@ class SolutionCase(cases: List[String], inputEquations: HashSet[FunEqEquation], 
 
   def solve(): Unit = {
 
+    println(s"\nCase: $name - start")
+
     val processedEquations = new BigProcessor(assumptions)
       .process(inputEquations ++ assumptions)
+
+    println(s"Case $name - end :: ${processedEquations.size}")
 
     equations = Some(processedEquations)
 
     if(processedEquations.exists(_.isImpossible)) status = Status.Impossible
     else {
-      val sols = processedEquations.filter(isSolution)
+      val sols = processedEquations.filter(_.isSolution)
 
       if (sols.isEmpty) {
 
@@ -76,40 +80,34 @@ class SolutionCase(cases: List[String], inputEquations: HashSet[FunEqEquation], 
   def print(detailed: Boolean): Unit = {
     println(s"Case: $name - $status")
 
+    // ToDo: Simplify assumptions here, just for printing
     assumptions match {
       case Nil => println("\tNo assumptions.")
       case _ => println(s"\tAssumptions: ${assumptions.mkString(", ")}")
     }
 
     println()
+
+    solutions.size match {
+      case 0 =>
+      case 1 => println(s"\tSolution: ${solutions.head}\n")
+      case _ =>
+        println("\tSolutions:")
+        for (s <- solutions) println(s"\t\t$s")
+        println()
+    }
+
     equations match {
       case None => println("Not processed yet.")
       case Some(e) =>
-        println(s"Total equations: ${e.size}\n")
-        for (equation <- e.toList.sortWith(_.toString.length < _.toString.length)) equation.print(detailed)
+        println(s"\tTotal equations: ${e.size}\n")
+        for (equation <- e.toList.sortWith(_.toString.length < _.toString.length))
+          equation.print(detailed, prefix = "\t\t")
     }
 
     for (child <- children) {
       println()
       child.print(detailed)
-    }
-  }
-
-  private def isSolution(equation: FunEqEquation): Boolean = {
-    equation match {
-      case FunEqEquation(_, FunEqVarLeaf("x"), right, true) if xOnly(right) => true
-      case _ => false
-    }
-  }
-
-  private def xOnly(expression: FunEqExpression): Boolean =
-      (Info.getAllVariables(expression) diff HashSet("x")).isEmpty && !hasFunctionCalls(expression)
-
-  private def hasFunctionCalls(expression: FunEqExpression): Boolean = {
-    expression match {
-      case FunEqFunc(_, _) => true
-      case FunEqNode(_, left, right) => hasFunctionCalls(left) || hasFunctionCalls(right)
-      case _ => false
     }
   }
 

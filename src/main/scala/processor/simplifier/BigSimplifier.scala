@@ -26,7 +26,7 @@ class BigSimplifier(assumptions: List[FunEqEquation] = List()) extends Simplifie
   }
 
   def process(equations: HashSet[FunEqEquation]): HashSet[FunEqEquation] = {
-//    println(s"BigSimplifier :: ${equations.size} equations")
+    println(s"BigSimplifier :: ${equations.size}")
     equations.map(simplify)
   }
 

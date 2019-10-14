@@ -1,5 +1,9 @@
 package general
 
+import processor.AuxProcessor
+
+import scala.collection.immutable.HashSet
+
 case class FunEqEquation(source: FunEqSource, left: FunEqExpression, right: FunEqExpression, isEquality: Boolean) {
 
   private def sign: String = if(isEquality) "=" else "!="
@@ -20,10 +24,10 @@ case class FunEqEquation(source: FunEqSource, left: FunEqExpression, right: FunE
     }
   }
 
-  def print(detailed: Boolean): Unit =
+  def print(detailed: Boolean, prefix: String = ""): Unit =
     if (detailed) {
-      println(s"$this [$source]")
-    } else println(this)
+      println(s"$prefix$this [$source]")
+    } else println(s"$prefix$this")
 
   override def toString: String = s"${left.print(0)} $sign ${right.print(0)}"
 
@@ -44,5 +48,12 @@ case class FunEqEquation(source: FunEqSource, left: FunEqExpression, right: FunE
       leftHashCode * 19 - rightHashCode * 17 + isEquality.hashCode
     else
       rightHashCode * 19 - leftHashCode * 17 + isEquality.hashCode
+  }
+
+  def isSolution: Boolean = {
+    this match {
+      case FunEqEquation(_, FunEqFunc(_, FunEqVarLeaf("x")), right, true) if AuxProcessor.xOnly(right) => true
+      case _ => false
+    }
   }
 }
