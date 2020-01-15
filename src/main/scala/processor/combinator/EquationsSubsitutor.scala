@@ -7,17 +7,16 @@ import scala.collection.immutable.HashSet
 
 object EquationsSubsitutor extends Processor {
   override def process(equations: HashSet[FunEqEquation]): HashSet[FunEqEquation] = {
+    val relevantEquations = equations
+      .filter(!_.isTrivial)
+      .filter(_.isEquality)
+
     val newEqs = {
-
-      val relevantEquations = equations
-        .filter(!_.isTrivial)
-        .filter(_.isEquality)
-
       for (
         from <- relevantEquations;
         into <- relevantEquations
       ) yield insert(from, into)
-      }.flatten
+    }.flatten
 
     newEqs ++ equations
   }

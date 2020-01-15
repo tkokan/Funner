@@ -14,8 +14,6 @@ abstract class HighLevelProcessor extends Processor {
   @tailrec
   final override def process(equations: HashSet[FunEqEquation]): HashSet[FunEqEquation] = {
 
-    println(s"$this :: ${equations.size}")
-
     if (equations.exists(_.isImpossible)) equations
     else {
       val processed = composed(equations)

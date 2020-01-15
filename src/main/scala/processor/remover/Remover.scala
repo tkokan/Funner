@@ -10,8 +10,6 @@ import scala.collection.immutable.HashSet
 object Remover extends Processor {
   override def process(equations: HashSet[FunEqEquation]): HashSet[FunEqEquation] = {
 
-    println(s"Remover :: ${equations.size}")
-
     val (functionValues, otherEquations) = equations.partition(isFunctionValue)
 
     val processedEquations = otherEquations

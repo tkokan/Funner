@@ -25,10 +25,7 @@ class BigSimplifier(assumptions: List[FunEqEquation] = List()) extends Simplifie
       simplify(processed)
   }
 
-  def process(equations: HashSet[FunEqEquation]): HashSet[FunEqEquation] = {
-    println(s"BigSimplifier :: ${equations.size}")
-    equations.map(simplify)
-  }
+  def process(equations: HashSet[FunEqEquation]): HashSet[FunEqEquation] = equations.map(simplify)
 
   private lazy val composed: FunEqEquation => FunEqEquation =
     simplifiers
