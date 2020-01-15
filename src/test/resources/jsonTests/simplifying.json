@@ -1,0 +1,34 @@
+[
+  {
+    "name": "Constants addition - 1",
+    "sources": ["x = 2 + 3"],
+    "target": "x = 5"
+  },
+
+  {
+    "name": "Constants addition - 2",
+    "sources": ["f(x) = (x + 1) + 2"],
+    "target": "f(x) = x + 3"
+  },
+
+  {
+    "name": "Constants addition - 3",
+    "sources": ["f(2) * f(2) = f(2 + 2) + (2 * 2)"],
+    "target": "f(2) * f(2) = f(4) + 4"
+  },
+
+  {
+    "name": "Cancel addition",
+    "sources": ["5 + f(x) = 4 + f(y)"],
+    "target": "1 + f(x) = f(y)"
+  },
+
+  {
+    "name": "Cancel multiplication",
+    "sources": [
+      "f(1) * f(2) = 0",
+      "f(2) != 0"
+    ],
+    "target": "f(1) = 0"
+  }
+]
